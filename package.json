@@ -1,0 +1,108 @@
+{
+    "name": "query-editor-boost",
+    "displayName": "Query Editor Boost",
+    "description": "Helpful add-ons for query editing",
+    "version": "0.1.0",
+    "publisher": "drewsk",
+    "engines": {
+        "vscode": "^1.37.0",
+        "azdata": "*"
+    },
+    "categories": [
+        "Other"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dzsquared/query-editor-boost.git"
+    },
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "dsk.resetDashboards",
+                "title": "QE Boost: Reset Dashboard Shortcuts"
+            },
+            {
+                "command": "dsk.useDatabase",
+                "title": "QE Boost: Use Database",
+                "when": "queryEditorVisible && connectionProvider == 'MSSQL'"
+            },
+            {
+                "command": "dsk.newqueryoption",
+                "title": "QE Boost: New Query",
+                "icon": {
+                    "light": "./src/media/newquery.svg",
+                    "dark": "./src/media/newquery-inverse.svg"
+                }
+            },
+            {
+                "command": "dsk.createQueryTemplate",
+                "title": "QE Boost: Set New Query Template",
+                "when": "queryEditorVisible"
+            },
+            {
+                "command": "dsk.addSnippetPlaceholder",
+                "title": "QE Boost: Add Snippet Placeholder",
+                "when": "queryEditorVisible"
+            },
+            {
+                "command": "dsk.addSnippetVariable",
+                "title": "QE Boost: Add Snippet Variable",
+                "when": "queryEditorVisible"
+            },
+            {
+                "command": "dsk.saveNewSnippet",
+                "title": "QE Boost: Save New Snippet",
+                "when": "queryEditorVisible"
+            }
+        ],
+        "keybindings": [
+            {
+                "key": "ctrl+u",
+                "command": "dsk.useDatabase",
+                "when": "queryEditorVisible"
+            },
+            {
+                "key": "ctrl+n",
+                "command": "dsk.newqueryoption"
+            }
+        ],
+        "configuration": [
+            {
+                "title": "NewQueryTemplate",
+                "properties": {
+                    "newquerytemplate.DefaultQueryTemplate": {
+                        "type": "array",
+                        "default": [
+                            "--set a default new query template with the command QE Boost: Set New Query Template",
+                            "",
+                            ""
+                        ],
+                        "description": "Query text to insert into new query windows"
+                    }
+                }
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install && node ./node_modules/azdata/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test",
+        "proposedapi": "node installTypings.js"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "azdata": "1.0.0",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "jsonc-parser": "^2.1.1"
+    }
+}
