@@ -5,7 +5,7 @@ This extension adds several features helpful with query writing in Azure Data St
 ![Query Editor Boost](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/QEboost200.png)
 
 ## Installation
-The current release is available to [download as a .vsix file](https://github.com/dzsquared/query-editor-boost/somethingsomething.vsix) and can be installed by opening the command palette (`ctrl/command+shift+p`) and selecting `Extensions: Install from VSIX...`
+The current release is available to [download as a .vsix file](https://github.com/dzsquared/query-editor-boost/releases/download/0.1.0/query-editor-boost-0.1.0.vsix) and can be installed by opening the command palette (`ctrl/command+shift+p`) and selecting `Extensions: Install from VSIX...`
 
 ### Setup: New Query Template
 Edit the setting for "New Query Template" in Azure Data Studio settings directly or create a new query template in the editor and run the command "QE Boost: Set New Query Template".
@@ -34,10 +34,13 @@ Change the connected database in a query editor with the "QE Boost: Use Database
 
 When creating new snippets, move quickly through the syntax and manual JSON editing with friendly snippet creation.
 
-#### Insert Placeholders and Variables
 Makes writing new snippet queries easier by placing placeholders (tab stops) and supported variables in the editor window.
 
+#### Insert Placeholders
+
 ![Snippet Placeholders](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/snippetPlaceholders.gif)
+
+#### Insert Variables
 
 ![Snippet Variables](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/snippetVariables.gif)
 
@@ -61,7 +64,7 @@ Extension for VS Code, licensed under MIT license, adapted for use in this exten
 
 ## Known Issues
 
-No open issues at this time.
+- new query button on Server and Database dashboards is missing icon
 
 ## Unknown Issues
 Can be raised here: https://github.com/dzsquared/query-editor-boost/issues
