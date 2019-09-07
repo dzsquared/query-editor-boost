@@ -12,7 +12,6 @@ export class placeScript {
     public async placescript(scriptText:string, context?:sqlops.IConnectionProfile, oecontext?: sqlops.ObjectExplorerContext) {
         try {
             var connection;
-            vscode.window.showInformationMessage('starting placescript');
             if (context && context.id) {
                 this.connectionId = context.id;
                 this.dbName = context.databaseName;

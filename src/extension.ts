@@ -81,8 +81,17 @@ export function activate(context: vscode.ExtensionContext) {
         
         let currentQuery:string = editor.document.getText();
         while (placeholderIndex == 0) {
-            if (!(currentQuery.includes('${'+testIndex.toString()) ) ) {
-                placeholderIndex = testIndex;
+            if ( currentQuery.includes(':'+newPlaceholder+'}') ) {
+                let probableindex:string = currentQuery.substr(currentQuery.indexOf(':'+newPlaceholder+'}')-2,2);
+                if (probableindex[0] == '{') {
+                    placeholderIndex = parseInt(probableindex[1]);
+                } else {
+                    placeholderIndex = parseInt(probableindex);
+                }
+            } else {
+                if (!(currentQuery.includes('${'+testIndex.toString()) ) ) {
+                    placeholderIndex = testIndex;
+                }
             }
             testIndex++;
         }

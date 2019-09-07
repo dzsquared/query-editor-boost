@@ -2,7 +2,7 @@
     "name": "query-editor-boost",
     "displayName": "Query Editor Boost",
     "description": "Helpful add-ons for query editing",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "publisher": "drewsk",
     "engines": {
         "vscode": "^1.37.0",
@@ -34,8 +34,8 @@
                 "command": "dsk.newqueryoption",
                 "title": "QE Boost: New Query",
                 "icon": {
-                    "light": "./src/media/newquery.svg",
-                    "dark": "./src/media/newquery-inverse.svg"
+                    "light": "src/media/newquery.svg",
+                    "dark": "src/media/newquery-inverse.svg"
                 }
             },
             {
