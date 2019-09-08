@@ -1,8 +1,19 @@
 # Azure Data Studio - Query Editor Boost
 
-This extension adds several features helpful with query writing in Azure Data Studio - use database keyboard shortcut, new query template, and friendly snippet editor.
+This extension adds several features helpful with query writing in Azure Data Studio:
+* [use database keyboard shortcut](#use-database)
+* [new query template](#new-query-from-template)
+* [friendly snippet editor](#create-new-snippets)
 
-![Query Editor Boost](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/QEboost200.png)
+![Query Editor Boost](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/QEboost100.png)
+
+
+If you have any questions, feel free to reach out to @SysAdminDrew on Twitter or SQLcommunity.slack.com.
+
+Report any bugs or request features here: https://github.com/dzsquared/query-editor-boost/issues
+
+Interested in contributing to this project?  Please check out [CONTRIBUTING](https://github.com/dzsquared/query-editor-boost/blob/master/CONTRIBUTING.md) - a work in progress.
+
 
 ## Installation
 The current release is available to [download as a .vsix file](https://github.com/dzsquared/query-editor-boost/releases/download/0.2.0/query-editor-boost-0.2.0.vsix) and can be installed by opening the command palette (`ctrl/command+shift+p`) and selecting `Extensions: Install from VSIX...`
@@ -13,6 +24,13 @@ Edit the setting for "New Query Template" by creating a new query template in th
 
 ### Uninstalling?
 I'm sad to see you go, but before you uninstall I recommended running the command "QE Boost: Reset Dashboard Shortcuts".  This will re-add the original *New Query* button to the server and database dashboards.
+
+
+## Extension Settings
+
+This extension contributes the following settings:
+
+* `newquerytemplate.DefaultQueryTemplate`: the default new query template, an array of strings
 
 
 # Features
@@ -63,8 +81,7 @@ Extension for VS Code, licensed under MIT license, adapted for use in this exten
 
 
 
-
------------------------------------------------------------------------------------------------------------
+# Housekeeping
 
 ## Known Issues
 
@@ -84,12 +101,6 @@ Can be raised here: https://github.com/dzsquared/query-editor-boost/issues
 
 - Initial release
 
-
------------------------------------------------------------------------------------------------------------
-
-## Extension Settings
-
-This extension contributes the following settings:
-
-* `newquerytemplate.DefaultQueryTemplate`: the default new query template, an array of strings
+## License
+[MIT](https://github.com/dzsquared/query-editor-boost/blob/master/LICENSE)
 
