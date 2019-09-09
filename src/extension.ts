@@ -154,7 +154,6 @@ export function activate(context: vscode.ExtensionContext) {
 			if (editor === undefined) { return; }
 
             let snippetText = editor.document.getText();
-            vscode.window.showInformationMessage(snippetText);
 
 			var snippet = new Snippet();
 			var snippetsManager = new SnippetsManager();
