@@ -2,7 +2,7 @@
     "name": "query-editor-boost",
     "displayName": "Query Editor Boost",
     "description": "Helpful add-ons for query editing",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "publisher": "drewsk",
     "engines": {
         "vscode": "^1.37.0",
