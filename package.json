@@ -68,6 +68,16 @@
             {
                 "key": "ctrl+n",
                 "command": "dsk.newqueryoption"
+            },
+            {
+                "key": "cmd+u",
+                "command": "dsk.useDatabase",
+                "when": "queryEditorVisible && isMac"
+            },
+            {
+                "key": "cmd+n",
+                "command": "dsk.newqueryoption",
+                "when": "isMac"
             }
         ],
         "configuration": [
