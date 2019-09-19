@@ -82,6 +82,14 @@
                             ""
                         ],
                         "description": "Query text to insert into new query windows"
+                    },
+                    "newquerytemplate.DefaultQueryLine": {
+                        "type": "number",
+                        "default": 0
+                    },
+                    "newquerytemplate.DefaultQueryCharacter": {
+                        "type": "number",
+                        "default": 0
                     }
                 }
             }
