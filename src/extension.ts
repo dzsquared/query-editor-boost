@@ -28,6 +28,8 @@ export function activate(context: vscode.ExtensionContext) {
         
         var theSettings = vscode.workspace.getConfiguration();
         theSettings.update('newquerytemplate.DefaultQueryTemplate',templateBuilder,vscode.ConfigurationTarget.Global);
+        theSettings.update('newquerytemplate.DefaultQueryLine', cursorPosition.line, vscode.ConfigurationTarget.Global);
+        theSettings.update('newquerytemplate.DefaultQueryCharacter', cursorPosition.character, vscode.ConfigurationTarget.Global);
     }
     var disposable_createQueryTemplate = vscode.commands.registerCommand('dsk.createQueryTemplate', createQueryTemplate);
     context.subscriptions.push(disposable_createQueryTemplate);
