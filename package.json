@@ -95,11 +95,11 @@
                     },
                     "newquerytemplate.DefaultQueryLine": {
                         "type": "number",
-                        "default": 0
+                        "default": -1
                     },
                     "newquerytemplate.DefaultQueryCharacter": {
                         "type": "number",
-                        "default": 0
+                        "default": -1
                     }
                 }
             }

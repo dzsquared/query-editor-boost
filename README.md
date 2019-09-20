@@ -5,7 +5,7 @@ This extension adds several features helpful with query writing in Azure Data St
 * [new query template](#new-query-from-template)
 * [friendly snippet editor](#create-new-snippets)
 
-![Query Editor Boost](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/QEboost100.png)
+![Query Editor Boost](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/QEboost_wide200.png)
 
 
 If you have any questions, feel free to reach out to @SysAdminDrew on Twitter or SQLcommunity.slack.com.
@@ -16,10 +16,10 @@ Interested in contributing to this project?  Please check out [CONTRIBUTING](htt
 
 
 ## Installation
-The current release is available to [download as a .vsix file](https://github.com/dzsquared/query-editor-boost/releases/download/0.2.0/query-editor-boost-0.2.0.vsix) and can be installed by opening the command palette (`ctrl/command+shift+p`) and selecting `Extensions: Install from VSIX...`
+The current release is available to [download as a .vsix file](https://github.com/dzsquared/query-editor-boost/releases/download/0.3.0/query-editor-boost-0.3.0.vsix) and can be installed by opening the command palette (`ctrl/command+shift+p`) and selecting `Extensions: Install from VSIX...`
 
 ### Setup: New Query Template
-Edit the setting for "New Query Template" by creating a new query template in the editor and running the command "QE Boost: Set New Query Template".  This setting can also be updated directly in the Azure Data Studio settings.
+Edit the setting for "New Query Template" by creating a new query template in the editor and running the command "QE Boost: Set New Query Template". This setting includes the line and character of the cursor position such that the new query window can place the cursor at the beginning, middle, or end of the template. The new query template settings can also be updated directly in the Azure Data Studio settings.
 
 
 ### Uninstalling?
@@ -31,6 +31,8 @@ I'm sad to see you go, but before you uninstall I recommended running the comman
 This extension contributes the following settings:
 
 * `newquerytemplate.DefaultQueryTemplate`: the default new query template, an array of strings
+* `newquerytemplate.DefaultQueryLine`: the line of the location of cursor placement for new query template, a number
+* `newquerytemplate.DefaultQueryCharacter`: the character of the location of cursor placement for new query template, a number
 
 
 # Features
@@ -91,6 +93,11 @@ Extension for VS Code, licensed under MIT license, adapted for use in this exten
 Can be raised here: https://github.com/dzsquared/query-editor-boost/issues
 
 ## Release Notes
+
+### 0.3.0
+
+- Adds cursor position to new query template
+- Adds MacOS keybindings (cmd)
 
 ### 0.2.0
 

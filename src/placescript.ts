@@ -31,12 +31,14 @@ export class placeScript {
                 edit.insert(new vscode.Position(0, 0), scriptText);
             });
             
-        const workbenchConfig = vscode.workspace.getConfiguration('newquerytemplate');
-        let lineAt: number = workbenchConfig.get('DefaultQueryLine');
-        let charAt: number = workbenchConfig.get('DefaultQueryCharacter');
-        let newPosition: vscode.Position = new vscode.Position(lineAt, charAt);
-        let newSelection = new vscode.Selection(newPosition, newPosition);
-        editor.selection = newSelection;
+            const workbenchConfig = vscode.workspace.getConfiguration('newquerytemplate');
+            let lineAt: number = workbenchConfig.get('DefaultQueryLine');
+            let charAt: number = workbenchConfig.get('DefaultQueryCharacter');
+            if (lineAt >= 0 && charAt >= 0) {
+                let newPosition: vscode.Position = new vscode.Position(lineAt, charAt);
+                let newSelection = new vscode.Selection(newPosition, newPosition);
+                editor.selection = newSelection;
+            }
 
             if ((context || connection) && this.connectionId) { 
                 if (this.dbName !== '') {
