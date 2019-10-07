@@ -2,7 +2,7 @@
     "name": "query-editor-boost",
     "displayName": "Query Editor Boost",
     "description": "Helpful add-ons for query editing",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "publisher": "drewsk",
     "engines": {
         "vscode": "^1.37.0",
@@ -57,6 +57,16 @@
                 "command": "dsk.saveNewSnippet",
                 "title": "QE Boost: Save New Snippet",
                 "when": "queryEditorVisible"
+            },
+            {
+                "command": "dsk.checkThisQuery",
+                "title": "QE Boost: Show Where Clause",
+                "when": "queryEditorVisible"
+            },
+            {
+                "command": "dsk.runQuery",
+                "title": "QE Boost: Execute Query",
+                "when": "queryEditorVisible"
             }
         ],
         "keybindings": [
@@ -68,6 +78,11 @@
             {
                 "key": "ctrl+n",
                 "command": "dsk.newqueryoption"
+            },
+            {
+                "key": "ctrl+e",
+                "command": "dsk.runQuery",
+                "when": "queryEditorVisible"
             },
             {
                 "key": "cmd+u",
@@ -82,7 +97,7 @@
         ],
         "configuration": [
             {
-                "title": "NewQueryTemplate",
+                "title": "Query Editor Boost",
                 "properties": {
                     "newquerytemplate.DefaultQueryTemplate": {
                         "type": "array",
@@ -100,6 +115,11 @@
                     "newquerytemplate.DefaultQueryCharacter": {
                         "type": "number",
                         "default": -1
+                    },
+                    "queryeditorboost.WhereClauseChecking": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Pre-execution WHERE clause checking"
                     }
                 }
             }
@@ -121,6 +141,9 @@
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
-        "jsonc-parser": "^2.1.1"
+        "flora-sql-parser": "^0.9.4",
+        "jsonc-parser": "^2.1.1",
+        "node-sql-parser": "^1.6.2",
+        "sqlite-parser": "^1.0.1"
     }
 }

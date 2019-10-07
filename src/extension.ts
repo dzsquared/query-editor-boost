@@ -1,12 +1,15 @@
 'use strict';
 import * as vscode from 'vscode';
 import * as azdata from 'azdata';
+import * as parser from 'node-sql-parser';
 import {placeScript} from './placescript';
 import {changeDatabase} from './changeDatabase';
 import {settingsUpdates} from './settingsUpdates';
+import {executeQuery} from './executeQuery';
 
 import Snippet from "./vscode-snippet-creator/Snippet";
 import SnippetsManager from "./vscode-snippet-creator/SnippetsManager";
+import { parse } from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
     // setup the dashboard task buttons
@@ -136,7 +139,7 @@ export function activate(context: vscode.ExtensionContext) {
             {label:"WORKSPACE_NAME", description: "The name of the opened workspace or folder"},
         ];
         let newVariable = await vscode.window.showQuickPick(variableList, 
-            { placeHolder: 'Snippet Variables', "ignoreFocusOut": true}
+            { placeHolder: 'Snippet Variables', ignoreFocusOut: true}
         );
         let editor = vscode.window.activeTextEditor;
         let placeholderSyntax = '$'+ newVariable.label;
@@ -188,6 +191,40 @@ export function activate(context: vscode.ExtensionContext) {
     }
     var disposable_saveNewSnippet = vscode.commands.registerCommand('dsk.saveNewSnippet', saveNewSnippet);
     context.subscriptions.push(disposable_saveNewSnippet);
+
+
+    // var checkThisQuery = async () => {
+    //     const sqlParser = new parser.Parser()
+    //     let queryText = vscode.window.activeTextEditor.document.getText();
+    //     vscode.window.showInformationMessage(queryText);
+    //     let parsedQuery = <parser.AST>sqlParser.astify(queryText);
+    //     vscode.window.showInformationMessage(parsedQuery.type);
+    //     console.log(parsedQuery);
+    //     if (parsedQuery.type == "select") {
+    //         console.log(parsedQuery.where);
+            
+    //         vscode.window.showInformationMessage("it is a select statement");
+    //         if (parsedQuery.where === null) {
+    //             vscode.window.showErrorMessage('hey theres no where statement');
+    //         } else {
+    //             vscode.window.showInformationMessage('everything is fine');
+    //         }
+    //     }
+    //     let qeListener: azdata.queryeditor.QueryEventListener;
+    //     let thisQE = await azdata.queryeditor.getQueryDocument(vscode.window.activeTextEditor.document.uri.toString());
+    //     qeListener.onQueryEvent('queryStart',thisQE,undefined);
+    //     // azdata.queryeditor.registerQueryEventListener()
+    // }
+    // var disposable_checkThisQuery = vscode.commands.registerCommand('dsk.checkThisQuery', checkThisQuery);
+    // context.subscriptions.push(disposable_checkThisQuery);
+
+    var runQuery = async () => {
+        let queryExecutioner = new executeQuery();
+        queryExecutioner.executeQuery();
+        
+    }
+    var disposable_runQuery = vscode.commands.registerCommand('dsk.runQuery', runQuery);
+    context.subscriptions.push(disposable_runQuery);
 
 }
 
