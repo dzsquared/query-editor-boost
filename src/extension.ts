@@ -1,15 +1,12 @@
 'use strict';
 import * as vscode from 'vscode';
 import * as azdata from 'azdata';
-import * as parser from 'node-sql-parser';
 import {placeScript} from './placescript';
 import {changeDatabase} from './changeDatabase';
 import {settingsUpdates} from './settingsUpdates';
-import {executeQuery} from './executeQuery';
 
 import Snippet from "./vscode-snippet-creator/Snippet";
 import SnippetsManager from "./vscode-snippet-creator/SnippetsManager";
-import { parse } from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
     // setup the dashboard task buttons
@@ -19,6 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
         await new settingsUpdates().initQEB();
     }
 
+    //dsk.createQueryTemplate
     var createQueryTemplate = async () => {
         const editor = vscode.window.activeTextEditor;
         let cursorPosition = editor.selection.start;
@@ -37,6 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
     var disposable_createQueryTemplate = vscode.commands.registerCommand('dsk.createQueryTemplate', createQueryTemplate);
     context.subscriptions.push(disposable_createQueryTemplate);
 
+    //dsk.newqueryoption
     var newQueryOption = async (profile?: azdata.IConnectionProfile, context?: azdata.ObjectExplorerContext) => {
         let scriptText:string = "";
         const workbenchConfig = vscode.workspace.getConfiguration('newquerytemplate');
@@ -54,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('dsk.newqueryoption', newQueryOption);
     azdata.tasks.registerTask('dsk.newqueryoption', (profile?: azdata.IConnectionProfile, context?: azdata.ObjectExplorerContext) => newQueryOption(profile, context));
     
-
+    //dsk.resetDashboards
     var useDatabaseCmd = () => {
         azdata.connection.getCurrentConnection().then( connection =>  {
             if (connection) {
@@ -77,7 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
     var disposable_resetDashboards = vscode.commands.registerCommand('dsk.resetDashboards', resetDashboards);
     context.subscriptions.push(disposable_resetDashboards);
 
-    
+    //dsk.addSnippetPlaceholder
     var addSnippetPlaceholder = async () => {
         let newPlaceholder = await vscode.window.showInputBox({placeHolder: 'Placeholder Name'});
         let editor = vscode.window.activeTextEditor;
@@ -112,7 +111,7 @@ export function activate(context: vscode.ExtensionContext) {
     var disposable_addSnippetPlaceholder = vscode.commands.registerCommand('dsk.addSnippetPlaceholder', addSnippetPlaceholder);
     context.subscriptions.push(disposable_addSnippetPlaceholder);
 
-    
+    //dsk.addSnippetVariable
     var addSnippetVariable = async () => {
         let variableList:vscode.QuickPickItem[] = [
             {label:"CURRENT_YEAR", description: "The current year"},
@@ -153,6 +152,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable_addSnippetVariable);
 
     
+    //dsk.saveNewSnippet
     var saveNewSnippet = async () => {
         try {
 			const editor = vscode.window.activeTextEditor;
@@ -193,38 +193,54 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable_saveNewSnippet);
 
 
-    // var checkThisQuery = async () => {
-    //     const sqlParser = new parser.Parser()
-    //     let queryText = vscode.window.activeTextEditor.document.getText();
-    //     vscode.window.showInformationMessage(queryText);
-    //     let parsedQuery = <parser.AST>sqlParser.astify(queryText);
-    //     vscode.window.showInformationMessage(parsedQuery.type);
-    //     console.log(parsedQuery);
-    //     if (parsedQuery.type == "select") {
-    //         console.log(parsedQuery.where);
-            
-    //         vscode.window.showInformationMessage("it is a select statement");
-    //         if (parsedQuery.where === null) {
-    //             vscode.window.showErrorMessage('hey theres no where statement');
-    //         } else {
-    //             vscode.window.showInformationMessage('everything is fine');
-    //         }
-    //     }
-    //     let qeListener: azdata.queryeditor.QueryEventListener;
-    //     let thisQE = await azdata.queryeditor.getQueryDocument(vscode.window.activeTextEditor.document.uri.toString());
-    //     qeListener.onQueryEvent('queryStart',thisQE,undefined);
-    //     // azdata.queryeditor.registerQueryEventListener()
-    // }
-    // var disposable_checkThisQuery = vscode.commands.registerCommand('dsk.checkThisQuery', checkThisQuery);
-    // context.subscriptions.push(disposable_checkThisQuery);
-
-    var runQuery = async () => {
-        let queryExecutioner = new executeQuery();
-        queryExecutioner.executeQuery();
+    // dsk.runQuerySection
+    var runQuerySection = async () => {
+        let endPosition: vscode.Position;
+        let startPosition: vscode.Position;
+        let cursorPosition: vscode.Position = vscode.window.activeTextEditor.selection.start;
+        let eagerRun: boolean = false;
         
+        if (vscode.window.activeTextEditor.document.lineAt(cursorPosition.line).isEmptyOrWhitespace || 
+            vscode.window.activeTextEditor.document.lineCount - 1 == cursorPosition.line) {
+            endPosition = cursorPosition;
+        } else {
+            // iterate down in document to an empty line to find end of segment
+            let j: number = cursorPosition.line+1;
+            while ((j <= vscode.window.activeTextEditor.document.lineCount)
+                && endPosition == undefined) {
+                if (vscode.window.activeTextEditor.document.lineAt(j).isEmptyOrWhitespace || j == vscode.window.activeTextEditor.document.lineCount - 1) {
+                    endPosition = new vscode.Position(j,vscode.window.activeTextEditor.document.lineAt(j).range.end.character);
+                    
+                }
+                j++;
+            }
+        }
+
+        // iterate up in document to find start of segment
+        let i: number = cursorPosition.line - 1;
+        while (i >= 0 && startPosition == undefined) {
+            if (vscode.window.activeTextEditor.document.lineAt(i).isEmptyOrWhitespace) {
+                startPosition = new vscode.Position(i,0);
+            }
+            i--;
+        }
+        if (startPosition == undefined) {
+            startPosition = new vscode.Position(0,0);
+        }
+
+        // highlight selection
+        vscode.window.activeTextEditor.selections = [];
+        vscode.window.activeTextEditor.selection = new vscode.Selection(startPosition, endPosition);
+
+        const workbenchConfig = vscode.workspace.getConfiguration('queryeditorboost');
+        eagerRun = workbenchConfig.get('EagerRunQuery');
+
+        if (eagerRun) {
+            vscode.commands.executeCommand('runQueryKeyboardAction');
+        }
     }
-    var disposable_runQuery = vscode.commands.registerCommand('dsk.runQuery', runQuery);
-    context.subscriptions.push(disposable_runQuery);
+    var disposable_runQuerySection = vscode.commands.registerCommand('dsk.runQuerySection', runQuerySection);
+    context.subscriptions.push(disposable_runQuerySection);
 
 }
 

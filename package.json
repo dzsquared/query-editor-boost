@@ -59,13 +59,8 @@
                 "when": "queryEditorVisible"
             },
             {
-                "command": "dsk.checkThisQuery",
-                "title": "QE Boost: Show Where Clause",
-                "when": "queryEditorVisible"
-            },
-            {
-                "command": "dsk.runQuery",
-                "title": "QE Boost: Execute Query",
+                "command": "dsk.runQuerySection",
+                "title": "QE Boost: Execute Query Section",
                 "when": "queryEditorVisible"
             }
         ],
@@ -80,8 +75,8 @@
                 "command": "dsk.newqueryoption"
             },
             {
-                "key": "ctrl+e",
-                "command": "dsk.runQuery",
+                "key": "ctrl+shift+e",
+                "command": "dsk.runQuerySection",
                 "when": "queryEditorVisible"
             },
             {
@@ -116,10 +111,10 @@
                         "type": "number",
                         "default": -1
                     },
-                    "queryeditorboost.WhereClauseChecking": {
+                    "queryeditorboost.EagerRunQuery": {
                         "type": "boolean",
-                        "default": true,
-                        "description": "Pre-execution WHERE clause checking"
+                        "default": false,
+                        "description": "Execute query immediately when highlighting section with 'Run Query Section'"
                     }
                 }
             }
