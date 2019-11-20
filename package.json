@@ -2,7 +2,7 @@
     "name": "query-editor-boost",
     "displayName": "Query Editor Boost",
     "description": "Helpful add-ons for query editing",
-    "version": "0.2.0",
+    "version": "0.3.1",
     "publisher": "drewsk",
     "engines": {
         "vscode": "^1.37.0",
@@ -57,6 +57,11 @@
                 "command": "dsk.saveNewSnippet",
                 "title": "QE Boost: Save New Snippet",
                 "when": "queryEditorVisible"
+            },
+            {
+                "command": "dsk.runQuerySection",
+                "title": "QE Boost: Execute Query Section",
+                "when": "queryEditorVisible"
             }
         ],
         "keybindings": [
@@ -68,11 +73,26 @@
             {
                 "key": "ctrl+n",
                 "command": "dsk.newqueryoption"
+            },
+            {
+                "key": "ctrl+shift+e",
+                "command": "dsk.runQuerySection",
+                "when": "queryEditorVisible"
+            },
+            {
+                "key": "cmd+u",
+                "command": "dsk.useDatabase",
+                "when": "queryEditorVisible && isMac"
+            },
+            {
+                "key": "cmd+n",
+                "command": "dsk.newqueryoption",
+                "when": "isMac"
             }
         ],
         "configuration": [
             {
-                "title": "NewQueryTemplate",
+                "title": "Query Editor Boost",
                 "properties": {
                     "newquerytemplate.DefaultQueryTemplate": {
                         "type": "array",
@@ -82,6 +102,19 @@
                             ""
                         ],
                         "description": "Query text to insert into new query windows"
+                    },
+                    "newquerytemplate.DefaultQueryLine": {
+                        "type": "number",
+                        "default": -1
+                    },
+                    "newquerytemplate.DefaultQueryCharacter": {
+                        "type": "number",
+                        "default": -1
+                    },
+                    "queryeditorboost.EagerRunQuery": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Execute query immediately when highlighting section with 'Run Query Section'"
                     }
                 }
             }
@@ -103,6 +136,9 @@
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
-        "jsonc-parser": "^2.1.1"
+        "flora-sql-parser": "^0.9.4",
+        "jsonc-parser": "^2.1.1",
+        "node-sql-parser": "^1.6.2",
+        "sqlite-parser": "^1.0.1"
     }
 }

@@ -38,7 +38,7 @@ export default class SnippetsManager {
 			fs.writeFileSync(snippetFile, '{}');
 		}
 
-		fs.readFile(snippetFile, (err, text) => {
+		fs.readFile(snippetFile, async (err, text) => {
 			if (err) {
 				return;
 			}
@@ -59,7 +59,11 @@ export default class SnippetsManager {
 			}
 
 			if (snippets[snippet.name] !== undefined) {
-				vscode.window.showErrorMessage("A snippet " + snippet.name + " already exists - so adding a unique id");
+                vscode.window.showErrorMessage("A snippet " + snippet.name + " already exists - so adding a unique id");
+                let ynOptions = ["No", "Yes"];
+                let overwriteYN = await vscode.window.showQuickPick(ynOptions, 
+                    { placeHolder: 'Do you want to overwrite a current snippet?', "ignoreFocusOut": true}
+                );
 				snippet.name = snippet.name + "_" + this.uuidv4();
 			}
 
