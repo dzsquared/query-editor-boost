@@ -4,6 +4,7 @@ import * as azdata from 'azdata';
 import {placeScript} from './placescript';
 import {changeDatabase} from './changeDatabase';
 import {settingsUpdates} from './settingsUpdates';
+import * as connectHolder from './connectHolder';
 
 import Snippet from "./vscode-snippet-creator/Snippet";
 import SnippetsManager from "./vscode-snippet-creator/SnippetsManager";
@@ -192,6 +193,17 @@ export function activate(context: vscode.ExtensionContext) {
     var disposable_saveNewSnippet = vscode.commands.registerCommand('dsk.saveNewSnippet', saveNewSnippet);
     context.subscriptions.push(disposable_saveNewSnippet);
 
+    
+    var connectHoldId : string;
+    async function willSaveQuery(willSave: vscode.TextDocumentWillSaveEvent) {
+        connectHoldId = await connectHolder.hangOnToConnection();
+    }
+    async function utilizeConnection(doc: vscode.TextDocument) {
+        await connectHolder.utilizeConnection(doc, connectHoldId);
+    }
+
+    context.subscriptions.push(vscode.workspace.onWillSaveTextDocument(willSaveQuery));
+    context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(utilizeConnection));
 
     // dsk.runQuerySection
     var runQuerySection = async () => {
@@ -241,8 +253,10 @@ export function activate(context: vscode.ExtensionContext) {
     }
     var disposable_runQuerySection = vscode.commands.registerCommand('dsk.runQuerySection', runQuerySection);
     context.subscriptions.push(disposable_runQuerySection);
-
 }
+
+
+
 
 export function deactivate() {
 }
