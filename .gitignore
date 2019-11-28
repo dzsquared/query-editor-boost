@@ -4,3 +4,4 @@ node_modules
 *.vsix
 extensionListing.json
 resources.txt
+telemetryConnect.json
