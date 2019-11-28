@@ -4,12 +4,33 @@ import * as azdata from 'azdata';
 import {placeScript} from './placescript';
 import {changeDatabase} from './changeDatabase';
 import {settingsUpdates} from './settingsUpdates';
-import * as connectHolder from './connectHolder';
+
+import { willSaveQuery, utilizeConnection } from './querySaveSaver';
 
 import Snippet from "./vscode-snippet-creator/Snippet";
 import SnippetsManager from "./vscode-snippet-creator/SnippetsManager";
 
+import { telemetryHelper } from './telemetryHelper';
+
+var tH: telemetryHelper;
+
 export function activate(context: vscode.ExtensionContext) {
+    const workbenchConfig = vscode.workspace.getConfiguration('queryeditorboost');
+    let eagerRun = workbenchConfig.get('EagerRunQuery');
+
+    if (eagerRun) { 
+        vscode.commands.executeCommand('setContext', 'EagerRunQuery', true);
+    } else {
+        vscode.commands.executeCommand('setContext', 'EagerRunQuery', false);
+    }
+
+    context.subscriptions.push(vscode.workspace.onWillSaveTextDocument(willSaveQuery));
+    context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(utilizeConnection));
+    // context.subscriptions.push(vscode.workspace.onDidChangeConfiguration());
+    
+    tH = new telemetryHelper(context);
+    tH.sendTelemetry('activated', { }, { });
+
     // setup the dashboard task buttons
     new settingsUpdates().initQEB();
     
@@ -19,6 +40,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     //dsk.createQueryTemplate
     var createQueryTemplate = async () => {
+        tH.sendTelemetry('createQueryTemplate', { }, { });
+
         const editor = vscode.window.activeTextEditor;
         let cursorPosition = editor.selection.start;
         let lineCount = editor.document.lineCount;
@@ -38,6 +61,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     //dsk.newqueryoption
     var newQueryOption = async (profile?: azdata.IConnectionProfile, context?: azdata.ObjectExplorerContext) => {
+        tH.sendTelemetry('newQueryOption', { }, { });
+
         let scriptText:string = "";
         const workbenchConfig = vscode.workspace.getConfiguration('newquerytemplate');
         let queryTemplateArray = new Array<String>();
@@ -56,6 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
     
     //dsk.resetDashboards
     var useDatabaseCmd = () => {
+        tH.sendTelemetry('useDatabaseCmd', { }, { });
         azdata.connection.getCurrentConnection().then( connection =>  {
             if (connection) {
                 let databaseList = azdata.connection.listDatabases(connection.connectionId);
@@ -71,6 +97,8 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable_useDatabase);
 
     var resetDashboards = async () => {
+        tH.sendTelemetry('resetDashboards', { }, { });
+
         await new settingsUpdates().uninstallQEB();
         
     }
@@ -155,6 +183,8 @@ export function activate(context: vscode.ExtensionContext) {
     
     //dsk.saveNewSnippet
     var saveNewSnippet = async () => {
+        tH.sendTelemetry('saveNewSnippet', { }, { });
+
         try {
 			const editor = vscode.window.activeTextEditor;
 			if (editor === undefined) { return; }
@@ -194,19 +224,19 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable_saveNewSnippet);
 
     
-    var connectHoldId : string;
-    async function willSaveQuery(willSave: vscode.TextDocumentWillSaveEvent) {
-        connectHoldId = await connectHolder.hangOnToConnection();
-    }
-    async function utilizeConnection(doc: vscode.TextDocument) {
-        await connectHolder.utilizeConnection(doc, connectHoldId);
-    }
-
-    context.subscriptions.push(vscode.workspace.onWillSaveTextDocument(willSaveQuery));
-    context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(utilizeConnection));
+    // var connectHoldId : string;
+    // async function willSaveQuery(willSave: vscode.TextDocumentWillSaveEvent) {
+    //     connectHoldId = await connectHolder.hangOnToConnection();
+    //     tH.sendTelemetry('saveQueryHelper', { }, { });
+    // }
+    // async function utilizeConnection(doc: vscode.TextDocument) {
+    //     await connectHolder.utilizeConnection(doc, connectHoldId);
+    // }
 
     // dsk.runQuerySection
     var runQuerySection = async () => {
+        tH.sendTelemetry('runQuerySection', { }, { });
+
         let endPosition: vscode.Position;
         let startPosition: vscode.Position;
         let cursorPosition: vscode.Position = vscode.window.activeTextEditor.selection.start;
@@ -214,7 +244,8 @@ export function activate(context: vscode.ExtensionContext) {
         
         if (vscode.window.activeTextEditor.document.lineAt(cursorPosition.line).isEmptyOrWhitespace || 
             vscode.window.activeTextEditor.document.lineCount - 1 == cursorPosition.line) {
-            endPosition = cursorPosition;
+            endPosition = vscode.window.activeTextEditor.document.lineAt(cursorPosition.line).range.end;
+            //cursorPosition;
         } else {
             // iterate down in document to an empty line to find end of segment
             let j: number = cursorPosition.line+1;
@@ -247,7 +278,7 @@ export function activate(context: vscode.ExtensionContext) {
         const workbenchConfig = vscode.workspace.getConfiguration('queryeditorboost');
         eagerRun = workbenchConfig.get('EagerRunQuery');
 
-        if (eagerRun) {
+        if (eagerRun) {            
             vscode.commands.executeCommand('runQueryKeyboardAction');
         }
     }
