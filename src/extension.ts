@@ -1,43 +1,35 @@
 'use strict';
 import * as vscode from 'vscode';
 import * as azdata from 'azdata';
-import {placeScript} from './placescript';
-import {changeDatabase} from './changeDatabase';
-import {settingsUpdates} from './settingsUpdates';
 
-import { willSaveQuery, utilizeConnection } from './querySaveSaver';
+import { changeDatabase } from './changeDatabase';
+import { initQEB, uninstallQEB } from './settingsUpdates';
+import { setEagerRunContext } from './contextSettings';
+import { willSaveQuery, querySaved } from './queryEditorHelper';
+import { addSnippetPlaceholder, addSnippetVariable, saveNewSnippet } from './snippetHelper';
+import { runQuerySection } from './runQuery';
 
-import Snippet from "./vscode-snippet-creator/Snippet";
-import SnippetsManager from "./vscode-snippet-creator/SnippetsManager";
-
+import { placeScript } from './placescript';
 import { telemetryHelper } from './telemetryHelper';
 
 var tH: telemetryHelper;
 
 export function activate(context: vscode.ExtensionContext) {
-    const workbenchConfig = vscode.workspace.getConfiguration('queryeditorboost');
-    let eagerRun = workbenchConfig.get('EagerRunQuery');
+    // query section execution keyboard shortcut setting
+    setEagerRunContext();
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(setEagerRunContext));
 
-    if (eagerRun) { 
-        vscode.commands.executeCommand('setContext', 'EagerRunQuery', true);
-    } else {
-        vscode.commands.executeCommand('setContext', 'EagerRunQuery', false);
-    }
-
-    context.subscriptions.push(vscode.workspace.onWillSaveTextDocument(willSaveQuery));
-    context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(utilizeConnection));
-    // context.subscriptions.push(vscode.workspace.onDidChangeConfiguration());
+    // patches text editor save and query connection
+    context.subscriptions.push(vscode.workspace.onWillSaveTextDocument( (willSave: vscode.TextDocumentWillSaveEvent) => willSaveQuery(willSave) ));
+    context.subscriptions.push(vscode.workspace.onDidSaveTextDocument( (doc: vscode.TextDocument) => querySaved(doc) ));
     
+    // telemetry setup
     tH = new telemetryHelper(context);
     tH.sendTelemetry('activated', { }, { });
 
     // setup the dashboard task buttons
-    new settingsUpdates().initQEB();
+    initQEB();
     
-    var setupQEB = async () => {
-        await new settingsUpdates().initQEB();
-    }
-
     //dsk.createQueryTemplate
     var createQueryTemplate = async () => {
         tH.sendTelemetry('createQueryTemplate', { }, { });
@@ -85,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
         azdata.connection.getCurrentConnection().then( connection =>  {
             if (connection) {
                 let databaseList = azdata.connection.listDatabases(connection.connectionId);
-                new changeDatabase().changeDatabase(databaseList, connection);
+                changeDatabase(databaseList, connection);
             } else {
                 vscode.window.showErrorMessage("No connection found.  Connect before switching databases.");
             }
@@ -99,191 +91,24 @@ export function activate(context: vscode.ExtensionContext) {
     var resetDashboards = async () => {
         tH.sendTelemetry('resetDashboards', { }, { });
 
-        await new settingsUpdates().uninstallQEB();
+        await uninstallQEB();
         
     }
     var disposable_resetDashboards = vscode.commands.registerCommand('dsk.resetDashboards', resetDashboards);
     context.subscriptions.push(disposable_resetDashboards);
 
-    //dsk.addSnippetPlaceholder
-    var addSnippetPlaceholder = async () => {
-        let newPlaceholder = await vscode.window.showInputBox({placeHolder: 'Placeholder Name'});
-        let editor = vscode.window.activeTextEditor;
-        let placeholderIndex = 0;
-        let testIndex = 1;
-        
-        let currentQuery:string = editor.document.getText();
-        while (placeholderIndex == 0) {
-            if ( currentQuery.includes(':'+newPlaceholder+'}') ) {
-                let probableindex:string = currentQuery.substr(currentQuery.indexOf(':'+newPlaceholder+'}')-2,2);
-                if (probableindex[0] == '{') {
-                    placeholderIndex = parseInt(probableindex[1]);
-                } else {
-                    placeholderIndex = parseInt(probableindex);
-                }
-            } else {
-                if (!(currentQuery.includes('${'+testIndex.toString()) ) ) {
-                    placeholderIndex = testIndex;
-                }
-            }
-            testIndex++;
-        }
-
-        let placeholderSyntax = '${'+placeholderIndex.toString()+':'+ newPlaceholder + '}';
-        let cursorLoc:vscode.Position = editor.selection.start;
-
-        editor.edit(edit => {
-            edit.insert(cursorLoc, placeholderSyntax);
-        });
-        
-    }
     var disposable_addSnippetPlaceholder = vscode.commands.registerCommand('dsk.addSnippetPlaceholder', addSnippetPlaceholder);
     context.subscriptions.push(disposable_addSnippetPlaceholder);
 
-    //dsk.addSnippetVariable
-    var addSnippetVariable = async () => {
-        let variableList:vscode.QuickPickItem[] = [
-            {label:"CURRENT_YEAR", description: "The current year"},
-            {label:"CURRENT_YEAR_SHORT", description: "The current year's last two digits"},
-            {label:"CURRENT_MONTH", description: "The month as two digits (example '02')"},
-            {label:"CURRENT_MONTH_NAME", description: "The full name of the month (example 'July')"},
-            {label:"CURRENT_MONTH_NAME_SHORT", description: "The short name of the month (example 'Jul')"},
-            {label:"CURRENT_DATE", description: "The day of the month"},
-            {label:"CURRENT_DAY_NAME", description: "The name of day (example 'Monday')"},
-            {label:"CURRENT_DAY_NAME_SHORT", description: "The short name of the day (example 'Mon')"},
-            {label:"CURRENT_HOUR", description: "The current hour in 24-hour clock format"},
-            {label:"CURRENT_MINUTE", description: "The current minute"},
-            {label:"CURRENT_SECOND", description: "The current second"},
-            {label:"TM_SELECTED_TEXT", description: "The currently selected text or the empty string"},
-            {label:"TM_CURRENT_LINE", description: "The contents of the current line"},
-            {label:"TM_CURRENT_WORD", description: "The contents of the word under cursor or the empty string"},
-            {label:"TM_LINE_INDEX", description: "The zero-index based line number"},
-            {label:"TM_LINE_NUMBER", description: "The one-index based line number"},
-            {label:"TM_FILENAME", description: "The filename of the current document"},
-            {label:"TM_FILENAME_BASE", description: "The filename of the current document without its extensions"},
-            {label:"TM_DIRECTORY", description: "The directory of the current document"},
-            {label:"TM_FILEPATH", description: "The full file path of the current document"},
-            {label:"CLIPBOARD", description: "The contents of your clipboard"},
-            {label:"WORKSPACE_NAME", description: "The name of the opened workspace or folder"},
-        ];
-        let newVariable = await vscode.window.showQuickPick(variableList, 
-            { placeHolder: 'Snippet Variables', ignoreFocusOut: true}
-        );
-        let editor = vscode.window.activeTextEditor;
-        let placeholderSyntax = '$'+ newVariable.label;
-        let cursorLoc:vscode.Position = editor.selection.start;
-        editor.edit(edit => {
-            edit.insert(cursorLoc, placeholderSyntax);
-        });
-        
-    }
     var disposable_addSnippetVariable = vscode.commands.registerCommand('dsk.addSnippetVariable', addSnippetVariable);
     context.subscriptions.push(disposable_addSnippetVariable);
 
-    
-    //dsk.saveNewSnippet
-    var saveNewSnippet = async () => {
-        tH.sendTelemetry('saveNewSnippet', { }, { });
-
-        try {
-			const editor = vscode.window.activeTextEditor;
-			if (editor === undefined) { return; }
-
-            let snippetText = editor.document.getText();
-
-			var snippet = new Snippet();
-			var snippetsManager = new SnippetsManager();
-
-			if (!(snippetText.length > 0)) {
-				vscode.window.showWarningMessage('Cannot create snippet from empty string. Select some text first.');
-				return;
-			}
-            snippet.language = editor.document.languageId;
-
-			const name = await vscode.window.showInputBox({ prompt: 'Enter snippet name' });
-			if (name === undefined) { return; }
-			snippet.name = name;
-
-			const prefix = await vscode.window.showInputBox({ prompt: 'Enter snippet prefix' });
-			if (prefix === undefined) { return; }
-			snippet.prefix = prefix;
-
-			const description = await vscode.window.showInputBox({ prompt: 'Enter snippet description' });
-			if (description === undefined) { return; }
-			snippet.description = description;
-
-            snippet.buildBody(snippetText); 
-			snippetsManager.addSnippet(snippet);
-		}
-		catch{
-			vscode.window.showErrorMessage("An unknown error appear");
-		}
-        
-    }
-    var disposable_saveNewSnippet = vscode.commands.registerCommand('dsk.saveNewSnippet', saveNewSnippet);
+    var disposable_saveNewSnippet = vscode.commands.registerCommand('dsk.saveNewSnippet', (tH) => saveNewSnippet(tH));
     context.subscriptions.push(disposable_saveNewSnippet);
 
-    
-    // var connectHoldId : string;
-    // async function willSaveQuery(willSave: vscode.TextDocumentWillSaveEvent) {
-    //     connectHoldId = await connectHolder.hangOnToConnection();
-    //     tH.sendTelemetry('saveQueryHelper', { }, { });
-    // }
-    // async function utilizeConnection(doc: vscode.TextDocument) {
-    //     await connectHolder.utilizeConnection(doc, connectHoldId);
-    // }
-
-    // dsk.runQuerySection
-    var runQuerySection = async () => {
-        tH.sendTelemetry('runQuerySection', { }, { });
-
-        let endPosition: vscode.Position;
-        let startPosition: vscode.Position;
-        let cursorPosition: vscode.Position = vscode.window.activeTextEditor.selection.start;
-        let eagerRun: boolean = false;
-        
-        if (vscode.window.activeTextEditor.document.lineAt(cursorPosition.line).isEmptyOrWhitespace || 
-            vscode.window.activeTextEditor.document.lineCount - 1 == cursorPosition.line) {
-            endPosition = vscode.window.activeTextEditor.document.lineAt(cursorPosition.line).range.end;
-            //cursorPosition;
-        } else {
-            // iterate down in document to an empty line to find end of segment
-            let j: number = cursorPosition.line+1;
-            while ((j <= vscode.window.activeTextEditor.document.lineCount)
-                && endPosition == undefined) {
-                if (vscode.window.activeTextEditor.document.lineAt(j).isEmptyOrWhitespace || j == vscode.window.activeTextEditor.document.lineCount - 1) {
-                    endPosition = new vscode.Position(j,vscode.window.activeTextEditor.document.lineAt(j).range.end.character);
-                    
-                }
-                j++;
-            }
-        }
-
-        // iterate up in document to find start of segment
-        let i: number = cursorPosition.line - 1;
-        while (i >= 0 && startPosition == undefined) {
-            if (vscode.window.activeTextEditor.document.lineAt(i).isEmptyOrWhitespace) {
-                startPosition = new vscode.Position(i,0);
-            }
-            i--;
-        }
-        if (startPosition == undefined) {
-            startPosition = new vscode.Position(0,0);
-        }
-
-        // highlight selection
-        vscode.window.activeTextEditor.selections = [];
-        vscode.window.activeTextEditor.selection = new vscode.Selection(startPosition, endPosition);
-
-        const workbenchConfig = vscode.workspace.getConfiguration('queryeditorboost');
-        eagerRun = workbenchConfig.get('EagerRunQuery');
-
-        if (eagerRun) {            
-            vscode.commands.executeCommand('runQueryKeyboardAction');
-        }
-    }
-    var disposable_runQuerySection = vscode.commands.registerCommand('dsk.runQuerySection', runQuerySection);
+    var disposable_runQuerySection = vscode.commands.registerCommand('dsk.runQuerySection', (tH) => runQuerySection(tH));
     context.subscriptions.push(disposable_runQuerySection);
+
 }
 
 

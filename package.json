@@ -2,7 +2,7 @@
     "name": "query-editor-boost",
     "displayName": "Query Editor Boost",
     "description": "Helpful add-ons for query editing",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "publisher": "drewsk",
     "engines": {
         "vscode": "^1.37.0",
@@ -77,7 +77,7 @@
             {
                 "key": "ctrl+shift+e",
                 "command": "dsk.runQuerySection",
-                "when": "queryEditorVisible"
+                "when": "queryEditorVisible && EagerRunQuery"
             },
             {
                 "key": "cmd+u",
@@ -88,6 +88,11 @@
                 "key": "cmd+n",
                 "command": "dsk.newqueryoption",
                 "when": "isMac"
+            },
+            {
+                "key": "cmd+shift+e",
+                "command": "dsk.runQuerySection",
+                "when": "queryEditorVisible && isMac && EagerRunQuery"
             }
         ],
         "configuration": [
@@ -113,8 +118,13 @@
                     },
                     "queryeditorboost.EagerRunQuery": {
                         "type": "boolean",
-                        "default": false,
-                        "description": "Execute query immediately when highlighting section with 'Run Query Section'"
+                        "default": true,
+                        "description": "Enables ctrl+shift+E keyboard shortcut to execute current query segment through 'Run Query Section' command"
+                    },
+                    "queryeditorboost.telemetry": {
+                        "type": "boolean",
+                        "default": "true",
+                        "description": "Enable usage data to be sent to an online service"
                     }
                 }
             }
@@ -139,6 +149,7 @@
         "flora-sql-parser": "^0.9.4",
         "jsonc-parser": "^2.1.1",
         "node-sql-parser": "^1.6.2",
-        "sqlite-parser": "^1.0.1"
+        "sqlite-parser": "^1.0.1",
+        "vscode-extension-telemetry": "^0.1.2"
     }
 }
