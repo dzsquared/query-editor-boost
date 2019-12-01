@@ -9,15 +9,13 @@ export class placeScript {
     private dbName: string = '';
 
     // places scriptText into fileName editor with current connection
-    public async placescript(scriptText:string, context?:sqlops.IConnectionProfile, oecontext?: sqlops.ObjectExplorerContext) {
+    public async placescript(scriptText:string, context?:sqlops.ObjectExplorerContext) {
         try {
             var connection;
-            if (context && context.id) {
-                this.connectionId = context.id;
-                this.dbName = context.databaseName;
-            } else if (oecontext) {
-                connection = oecontext.connectionProfile;
+            if (context) {
+                let connection = context.connectionProfile;
                 this.connectionId = connection.id;
+                this.dbName = connection.databaseName;
             } else {
                 connection = await sqlops.connection.getCurrentConnection();
                 if (connection) {
@@ -44,7 +42,7 @@ export class placeScript {
                 if (this.dbName !== '') {
                     var providerName:string;
                     if (context) {
-                        providerName = context.providerName;
+                        providerName = context.connectionProfile.providerName;
                     } else if (connection) {
                         providerName = connection.providerId;
                     }
