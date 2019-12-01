@@ -20,7 +20,7 @@ export class telemetryHelper {
 
     public sendTelemetry(eventName:string, stringObj:any, numericObj:any) {
         var theSettings = vscode.workspace.getConfiguration();
-        if  ( theSettings.get('demomode.telemetry') && theSettings.get('telemetry.enableTelemetry') ) {
+        if  ( theSettings.get('queryeditorboost.telemetry') && theSettings.get('telemetry.enableTelemetry') ) {
             this.reporter.sendTelemetryEvent(eventName, stringObj, numericObj);
         }
     }
