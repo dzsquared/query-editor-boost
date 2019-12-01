@@ -95,6 +95,20 @@
                 "when": "queryEditorVisible && isMac && EagerRunQuery"
             }
         ],
+        "menus": {
+            "objectExplorer/item/context": [
+                {
+                    "command": "dsk.newqueryoption",
+                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Server",
+                    "group": "QEB"
+                },
+                {
+                    "command": "dsk.newqueryoption",
+                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Database",
+                    "group": "QEB"
+                }
+            ]
+        },
         "configuration": [
             {
                 "title": "Query Editor Boost",
