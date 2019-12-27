@@ -4,6 +4,8 @@ This extension adds several features helpful with query writing in Azure Data St
 * [use database keyboard shortcut](#use-database)
 * [new query template](#new-query-from-template)
 * [friendly snippet editor](#create-new-snippets)
+* [run current query segment](#run-query-segment)
+* [reconnects query editor](#reconnects-query-editor)
 
 ![Query Editor Boost](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/QEboost_wide200.png)
 
@@ -16,14 +18,10 @@ Interested in contributing to this project?  Please check out [CONTRIBUTING](htt
 
 
 ## Installation
-The current release is available to [download as a .vsix file](https://github.com/dzsquared/query-editor-boost/releases/download/0.3.0/query-editor-boost-0.3.0.vsix) and can be installed by opening the command palette (`ctrl/command+shift+p`) and selecting `Extensions: Install from VSIX...`
+The current release is available to [download as a .vsix file](https://github.com/dzsquared/query-editor-boost/releases/download/0.4.0/query-editor-boost-0.4.0.vsix) and can be installed by opening the command palette (`ctrl/command+shift+p`) and selecting `Extensions: Install from VSIX...`
 
 ### Setup: New Query Template
 Edit the setting for "New Query Template" by creating a new query template in the editor and running the command "QE Boost: Set New Query Template". This setting includes the line and character of the cursor position such that the new query window can place the cursor at the beginning, middle, or end of the template. The new query template settings can also be updated directly in the Azure Data Studio settings.
-
-
-### Uninstalling?
-I'm sad to see you go, but before you uninstall I recommended running the command "QE Boost: Reset Dashboard Shortcuts".  This will re-add the original *New Query* button to the server and database dashboards.
 
 
 ## Extension Settings
@@ -33,7 +31,8 @@ This extension contributes the following settings:
 * `newquerytemplate.DefaultQueryTemplate`: the default new query template, an array of strings
 * `newquerytemplate.DefaultQueryLine`: the line of the location of cursor placement for new query template, a number
 * `newquerytemplate.DefaultQueryCharacter`: the character of the location of cursor placement for new query template, a number
-
+* `queryeditorboost.EagerRunQuery`: ability to disable ctrl/cmd+shift+E shortcut to run current query segment
+* `queryeditorboost.telemetry`: ability to disable to telemetry for Query Editor Boost
 
 # Features
 
@@ -81,7 +80,11 @@ Extension for VS Code, licensed under MIT license, adapted for use in this exten
 ![Save New Snippet](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/snippetSave.gif)
 
 
+## Run Query Segment
 
+
+## Reconnects Query Editor
+As of November 2019, the Azure Data Studio query editor does not automatically reconnect/stay connected when an "untitled" editor is saved for the first time.  Query Editor Boost handles this for you and immediately reconnects a query the first time you save it.
 
 # Housekeeping
 
@@ -93,6 +96,15 @@ Extension for VS Code, licensed under MIT license, adapted for use in this exten
 Can be raised here: https://github.com/dzsquared/query-editor-boost/issues
 
 ## Release Notes
+
+
+### 0.4.0
+
+- Run current query section shortcut (delineated by empty lines)
+- Reconnects query editor after editor save
+- New query option in object explorer context menu
+- Moves uninstall script to extension manifest
+- Adds telemetry
 
 ### 0.3.0
 

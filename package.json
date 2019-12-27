@@ -22,10 +22,6 @@
     "contributes": {
         "commands": [
             {
-                "command": "dsk.resetDashboards",
-                "title": "QE Boost: Reset Dashboard Shortcuts"
-            },
-            {
                 "command": "dsk.useDatabase",
                 "title": "QE Boost: Use Database",
                 "when": "queryEditorVisible && connectionProvider == 'MSSQL'"
@@ -99,12 +95,12 @@
             "objectExplorer/item/context": [
                 {
                     "command": "dsk.newqueryoption",
-                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Server",
+                    "when": "nodeType && nodeType == Server",
                     "group": "QEB"
                 },
                 {
                     "command": "dsk.newqueryoption",
-                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Database",
+                    "when": "nodeType && nodeType == Database",
                     "group": "QEB"
                 }
             ]
@@ -137,7 +133,7 @@
                     },
                     "queryeditorboost.telemetry": {
                         "type": "boolean",
-                        "default": "true",
+                        "default": true,
                         "description": "Enable usage data to be sent to an online service"
                     }
                 }
@@ -150,7 +146,8 @@
         "watch": "tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install && node ./node_modules/azdata/bin/install",
         "test": "npm run compile && node ./node_modules/vscode/bin/test",
-        "proposedapi": "node installTypings.js"
+        "proposedapi": "node installTypings.js",
+        "vscode:uninstall": "node ./out/uninstallQEB"
     },
     "devDependencies": {
         "typescript": "^2.6.1",
@@ -160,10 +157,7 @@
         "@types/mocha": "^2.2.42"
     },
     "dependencies": {
-        "flora-sql-parser": "^0.9.4",
-        "jsonc-parser": "^2.1.1",
-        "node-sql-parser": "^1.6.2",
-        "sqlite-parser": "^1.0.1",
+        "jsonc-parser": "^2.2.0",
         "vscode-extension-telemetry": "^0.1.2"
     }
 }
