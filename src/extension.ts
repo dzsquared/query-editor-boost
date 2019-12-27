@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as azdata from 'azdata';
 
 import { changeDatabase } from './changeDatabase';
-import { initQEB, uninstallQEB } from './settingsUpdates';
+import { initQEB } from './settingsUpdates';
 import { setEagerRunContext } from './contextSettings';
 import { willSaveQuery, querySaved } from './queryEditorHelper';
 import { addSnippetPlaceholder, addSnippetVariable, saveNewSnippet } from './snippetHelper';
@@ -12,7 +12,7 @@ import { runQuerySection } from './runQuery';
 import { placeScript } from './placescript';
 import { telemetryHelper } from './telemetryHelper';
 
-var tH: telemetryHelper;
+// var tH: telemetryHelper;
 
 export function activate(context: vscode.ExtensionContext) {
     // query section execution keyboard shortcut setting
@@ -24,7 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument( (doc: vscode.TextDocument) => querySaved(doc) ));
     
     // telemetry setup
-    tH = new telemetryHelper(context);
+    var tH = new telemetryHelper(context);
     tH.sendTelemetry('activated', { }, { });
 
     // setup the dashboard task buttons
@@ -69,9 +69,8 @@ export function activate(context: vscode.ExtensionContext) {
         new placeScript().placescript(scriptText, context);
     };
     vscode.commands.registerCommand('dsk.newqueryoption', newQueryOption);
-    azdata.tasks.registerTask('dsk.newqueryoption', ((context?: azdata.ObjectExplorerContext) => newQueryOption(context)));
+    azdata.tasks.registerTask('dsk.newqueryoption', ((profile?: azdata.IConnectionProfile, context?: azdata.ObjectExplorerContext) => newQueryOption(context)));
     
-    //dsk.resetDashboards
     var useDatabaseCmd = () => {
         tH.sendTelemetry('useDatabaseCmd', { }, { });
         azdata.connection.getCurrentConnection().then( connection =>  {
@@ -88,15 +87,6 @@ export function activate(context: vscode.ExtensionContext) {
     var disposable_useDatabase = vscode.commands.registerCommand('dsk.useDatabase', useDatabaseCmd);
     context.subscriptions.push(disposable_useDatabase);
 
-    var resetDashboards = async () => {
-        tH.sendTelemetry('resetDashboards', { }, { });
-
-        await uninstallQEB();
-        
-    }
-    var disposable_resetDashboards = vscode.commands.registerCommand('dsk.resetDashboards', resetDashboards);
-    context.subscriptions.push(disposable_resetDashboards);
-
     var disposable_addSnippetPlaceholder = vscode.commands.registerCommand('dsk.addSnippetPlaceholder', addSnippetPlaceholder);
     context.subscriptions.push(disposable_addSnippetPlaceholder);
 
@@ -106,7 +96,10 @@ export function activate(context: vscode.ExtensionContext) {
     var disposable_saveNewSnippet = vscode.commands.registerCommand('dsk.saveNewSnippet', (tH) => saveNewSnippet(tH));
     context.subscriptions.push(disposable_saveNewSnippet);
 
-    var disposable_runQuerySection = vscode.commands.registerCommand('dsk.runQuerySection', (tH) => runQuerySection(tH));
+    var RunQuerySection = (tH: telemetryHelper) => {
+        runQuerySection(tH);
+    }
+    var disposable_runQuerySection = vscode.commands.registerCommand('dsk.runQuerySection', RunQuerySection);
     context.subscriptions.push(disposable_runQuerySection);
 
 }

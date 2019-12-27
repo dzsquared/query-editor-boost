@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { telemetryHelper } from './telemetryHelper';
 
 export async function runQuerySection(tH: telemetryHelper) {
+    // var tH = new telemetryHelper(context);
     tH.sendTelemetry('runQuerySection', { }, { });
 
     let endPosition: vscode.Position;
