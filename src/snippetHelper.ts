@@ -2,7 +2,6 @@
 import * as vscode from 'vscode';
 import Snippet from "./vscode-snippet-creator/Snippet";
 import SnippetsManager from "./vscode-snippet-creator/SnippetsManager";
-import { telemetryHelper } from './telemetryHelper';
 
 export async function addSnippetPlaceholder() {
     let newPlaceholder = await vscode.window.showInputBox({placeHolder: 'Placeholder Name'});
@@ -73,9 +72,8 @@ export async function addSnippetVariable() {
     
 }
 
-export async function saveNewSnippet(tH: telemetryHelper) {
-    tH.sendTelemetry('saveNewSnippet', { }, { });
-
+export async function saveNewSnippet() {
+    
     try {
         const editor = vscode.window.activeTextEditor;
         if (editor === undefined) { return; }

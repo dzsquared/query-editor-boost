@@ -51,6 +51,6 @@ export default class Snippet {
 	}
 
 	buildBody (code: string) {
-		this._body = code.replace(/\t/g, '\\t').replace(/\r/g, '').split("\n");
+		this._body = code.replace(/\r/g, '').split("\n");
 	}
 }
