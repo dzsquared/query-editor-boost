@@ -56,8 +56,8 @@
             },
             {
                 "command": "dsk.runQuerySection",
-                "title": "QE Boost: Execute Query Section",
-                "when": "queryEditorVisible"
+                "title": "QE Boost: Run Query Section",
+                "when": "queryEditorVisible && qeb.EagerRunQuery"
             }
         ],
         "keybindings": [
@@ -73,7 +73,7 @@
             {
                 "key": "ctrl+shift+e",
                 "command": "dsk.runQuerySection",
-                "when": "queryEditorVisible && EagerRunQuery"
+                "when": "queryEditorVisible && qeb.EagerRunQuery"
             },
             {
                 "key": "cmd+u",
@@ -88,7 +88,7 @@
             {
                 "key": "cmd+shift+e",
                 "command": "dsk.runQuerySection",
-                "when": "queryEditorVisible && isMac && EagerRunQuery"
+                "when": "queryEditorVisible && isMac && qeb.EagerRunQuery"
             }
         ],
         "menus": {

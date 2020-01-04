@@ -93,11 +93,16 @@ export function activate(context: vscode.ExtensionContext) {
     var disposable_addSnippetVariable = vscode.commands.registerCommand('dsk.addSnippetVariable', addSnippetVariable);
     context.subscriptions.push(disposable_addSnippetVariable);
 
-    var disposable_saveNewSnippet = vscode.commands.registerCommand('dsk.saveNewSnippet', (tH) => saveNewSnippet(tH));
+    var SaveNewSnippet = () => {
+        tH.sendTelemetry('saveNewSnippet', { }, { });
+        saveNewSnippet();
+    }
+    var disposable_saveNewSnippet = vscode.commands.registerCommand('dsk.saveNewSnippet', SaveNewSnippet);
     context.subscriptions.push(disposable_saveNewSnippet);
 
-    var RunQuerySection = (tH: telemetryHelper) => {
-        runQuerySection(tH);
+    var RunQuerySection = () => {
+        tH.sendTelemetry('runQuerySection', { }, { });
+        runQuerySection();
     }
     var disposable_runQuerySection = vscode.commands.registerCommand('dsk.runQuerySection', RunQuerySection);
     context.subscriptions.push(disposable_runQuerySection);
