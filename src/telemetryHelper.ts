@@ -1,12 +1,11 @@
 import * as vscode from 'vscode';
-
 import * as telemetryConnect from  './telemetryConnect';
-let telemetryconnect: telemetryConnect.telemetryConnect = require('../telemetryConnect.json');
 
 // extension telemetry
 import TelemetryReporter from 'vscode-extension-telemetry';
 const extensionId = 'drewsk.query-editor-boost';
 const extension = vscode.extensions.getExtension(extensionId);
+let telemetryconnect: telemetryConnect.telemetryConnect = require('../telemetryConnect.json');
 const extensionVersion = extension.packageJSON.version;
 const key = telemetryconnect.token;  
 

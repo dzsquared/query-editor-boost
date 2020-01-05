@@ -18,7 +18,7 @@
     "activationEvents": [
         "*"
     ],
-    "main": "./out/extension",
+    "main": "./dist/extension",
     "contributes": {
         "commands": [
             {
@@ -30,8 +30,8 @@
                 "command": "dsk.newqueryoption",
                 "title": "QE Boost: New Query",
                 "icon": {
-                    "light": "src/media/newquery.svg",
-                    "dark": "src/media/newquery-inverse.svg"
+                    "light": "./dist/src/media/newquery.svg",
+                    "dark": "./dist/src/media/newquery-inverse.svg"
                 }
             },
             {
@@ -155,6 +155,7 @@
         "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.43",
         "azdata": "1.0.0",
+        "file-loader": "^5.0.2",
         "ts-loader": "^6.2.1",
         "typescript": "^2.6.1",
         "vscode": "^1.1.6",

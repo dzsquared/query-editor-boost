@@ -12,7 +12,8 @@ import { runQuerySection } from './runQuery';
 import { placeScript } from './placescript';
 import { telemetryHelper } from './telemetryHelper';
 
-// var tH: telemetryHelper;
+require('./media/newquery.svg');
+require('./media/newquery-inverse.svg');
 
 export function activate(context: vscode.ExtensionContext) {
     // query section execution keyboard shortcut setting
