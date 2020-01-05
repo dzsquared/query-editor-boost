@@ -100,8 +100,9 @@ Can be raised here: https://github.com/dzsquared/query-editor-boost/issues
 
 ### 0.4.0
 
-- Run current query section shortcut (delineated by empty lines)
 - Reconnects query editor after editor save
+- Packaged with webpack for performance improvement
+- Run current query section shortcut (delineated by empty lines)
 - New query option in object explorer context menu
 - Moves uninstall script to extension manifest
 - Adds telemetry
