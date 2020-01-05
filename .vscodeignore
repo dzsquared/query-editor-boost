@@ -8,3 +8,6 @@ typings/**
 tsconfig.json
 vsc-extension-quickstart.md
 tslint.json
+node_modules
+out/
+webpack.config.js

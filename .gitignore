@@ -5,3 +5,4 @@ node_modules
 extensionListing.json
 resources.txt
 telemetryConnect.json
+dist
