@@ -149,7 +149,7 @@
         "postinstall": "node ./node_modules/vscode/bin/install && node ./node_modules/azdata/bin/install",
         "test": "npm run compile && node ./node_modules/vscode/bin/test",
         "proposedapi": "node installTypings.js",
-        "vscode:uninstall": "node ./out/uninstallQEB"
+        "vscode:uninstall": "node ./dist/uninstallQEB"
     },
     "devDependencies": {
         "@types/mocha": "^2.2.42",
