@@ -5,7 +5,6 @@ import * as azdata from 'azdata';
 import { changeDatabase } from './changeDatabase';
 import { initQEB } from './settingsUpdates';
 import { setEagerRunContext } from './contextSettings';
-import { willSaveQuery, querySaved } from './queryEditorHelper';
 import { addSnippetPlaceholder, addSnippetVariable, saveNewSnippet } from './snippetHelper';
 import { runQuerySection } from './runQuery';
 
@@ -20,10 +19,6 @@ export function activate(context: vscode.ExtensionContext) {
     setEagerRunContext();
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(setEagerRunContext));
 
-    // patches text editor save and query connection
-    context.subscriptions.push(vscode.workspace.onWillSaveTextDocument( (willSave: vscode.TextDocumentWillSaveEvent) => willSaveQuery(willSave) ));
-    context.subscriptions.push(vscode.workspace.onDidSaveTextDocument( (doc: vscode.TextDocument) => querySaved(doc) ));
-    
     // telemetry setup
     var tH = new telemetryHelper(context);
     tH.sendTelemetry('activated', { }, { });
