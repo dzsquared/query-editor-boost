@@ -15,16 +15,14 @@ export class placeScript {
             if (context) {
                 let connection = context.connectionProfile;
                 this.connectionId = connection.id;
-                this.dbName = connection.databaseName;
+                this.dbName = context.connectionProfile.databaseName;
+                await vscode.commands.executeCommand('explorer.query', context.connectionProfile);
             } else {
-                connection = await sqlops.connection.getCurrentConnection();
-                if (connection) {
-                    this.connectionId = connection.connectionId;
-                    this.dbName = connection.databaseName;
-                }
+                await vscode.commands.executeCommand('newQuery');
             }
-            let doc = await vscode.workspace.openTextDocument({language: 'sql'});
-            let editor = await vscode.window.showTextDocument(doc, 1, false);
+
+            let editor = vscode.window.activeTextEditor;
+            let doc = editor.document;
             editor.edit(edit => {
                 edit.insert(new vscode.Position(0, 0), scriptText);
             });
@@ -38,41 +36,12 @@ export class placeScript {
                 editor.selection = newSelection;
             }
 
-            if ((context || connection) && this.connectionId) { 
-                if (this.dbName !== '') {
-                    var providerName:string;
-                    if (context) {
-                        providerName = context.connectionProfile.providerName;
-                    } else if (connection) {
-                        providerName = connection.providerId;
-                    }
-                    let dProvider = await sqlops.dataprotocol.getProvider<sqlops.ConnectionProvider>(providerName, sqlops.DataProviderType.ConnectionProvider);            
-                    let connectionUri = await sqlops.connection.getUriForConnection(this.connectionId);
-                    await dProvider.changeDatabase(connectionUri,this.dbName);
-                }
+            if (context && this.dbName) {
+                let providerName = context.connectionProfile.providerName;
+                let dProvider = await sqlops.dataprotocol.getProvider<sqlops.ConnectionProvider>(providerName, sqlops.DataProviderType.ConnectionProvider);            
+                let connectionUri = await sqlops.connection.getUriForConnection(this.connectionId);
+                await dProvider.changeDatabase(connectionUri,this.dbName);
                 await sqlops.queryeditor.connect(doc.uri.toString(), this.connectionId);
-            }
-        } catch (err) {
-            vscode.window.showErrorMessage(err);
-        }
-    }
-
-    
-    // places scriptText into fileName editor with current connection
-    public async placescriptAdv(scriptText, fileName, langId) {
-        try {
-            let connection = await sqlops.connection.getCurrentConnection();
-            
-            var setting: vscode.Uri = vscode.Uri.parse("untitled:" + fileName);
-            let doc = await vscode.workspace.openTextDocument(setting);
-            vscode.languages.setTextDocumentLanguage(doc, langId);
-            
-            let editor = await vscode.window.showTextDocument(doc, 1, false);
-            editor.edit(edit => {
-                edit.insert(new vscode.Position(0, 0), scriptText);
-            });
-            if (connection.connectionId) {  
-                await sqlops.queryeditor.connect(doc.uri.toString(), connection.connectionId);
             }
         } catch (err) {
             vscode.window.showErrorMessage(err);
