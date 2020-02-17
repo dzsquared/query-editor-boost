@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable_createQueryTemplate);
 
     //dsk.newqueryoption
-    var newQueryOption = async (context?: azdata.ObjectExplorerContext) => {
+    var newQueryOption = async (context?: azdata.ObjectExplorerContext) => { 
         tH.sendTelemetry('newQueryOption', { }, { });
 
         let scriptText:string = "";
@@ -67,10 +67,13 @@ export function activate(context: vscode.ExtensionContext) {
 `;
             });
         }
-        new placeScript().placescript(scriptText, context);
+        let pS = new placeScript()
+        await pS.placescript(scriptText, context);
     };
     vscode.commands.registerCommand('dsk.newqueryoption', newQueryOption);
-    azdata.tasks.registerTask('dsk.newqueryoption', ((profile?: azdata.IConnectionProfile, context?: azdata.ObjectExplorerContext) => newQueryOption(context)));
+    azdata.tasks.registerTask('dsk.newqueryoption', (
+            (profile?: azdata.IConnectionProfile, context?: azdata.ObjectExplorerContext) => newQueryOption(context)
+        ) );
     
     var useDatabaseCmd = () => {
         tH.sendTelemetry('useDatabaseCmd', { }, { });
@@ -109,9 +112,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable_runQuerySection);
 
 }
-
-
-
 
 export function deactivate() {
 }
