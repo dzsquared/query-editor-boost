@@ -4,7 +4,7 @@ This extension adds several features helpful with query writing in Azure Data St
 * [new query template](#new-query-from-template)
 * [use database keyboard shortcut](#use-database)
 * [run current query section](#run-query-section)
-* [reconnects query editor](#reconnects-query-editor)
+* ~~[reconnects query editor](#reconnects-query-editor)~~
 * [friendly snippet editor](#create-new-snippets)
 
 ![Query Editor Boost](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/QEboost_wide200.png)
@@ -18,7 +18,7 @@ Interested in contributing to this project?  Please check out [CONTRIBUTING](htt
 
 
 ## Installation
-The current release is available to [download as a .vsix file](https://github.com/dzsquared/query-editor-boost/releases/download/0.4.0/query-editor-boost-0.4.0.vsix) and can be installed by opening the command palette (`ctrl/command+shift+p`) and selecting `Extensions: Install from VSIX...`
+The current release is available to [download as a .vsix file](https://github.com/dzsquared/query-editor-boost/releases/download/0.4.1/query-editor-boost-0.4.1.vsix) and can be installed by opening the command palette (`ctrl/command+shift+p`) and selecting `Extensions: Install from VSIX...`
 
 ### Setup: New Query Template
 Edit the setting for "New Query Template" by creating a new query template in the editor and running the command "QE Boost: Set New Query Template". This setting includes the line and character of the cursor position such that the new query window can place the cursor at the beginning, middle, or end of the template. The new query template settings can also be updated directly in the Azure Data Studio settings.
@@ -28,7 +28,7 @@ Edit the setting for "New Query Template" by creating a new query template in th
 * [new query template](#new-query-from-template)
 * [use database keyboard shortcut](#use-database)
 * [run current query section](#run-query-section)
-* [reconnects query editor](#reconnects-query-editor)
+* ~~[reconnects query editor](#reconnects-query-editor)~~
 * [friendly snippet editor](#create-new-snippets)
 
 ## New Query from Template
@@ -53,6 +53,8 @@ With multiple queries in the editor, you can run them by "section" - as delineat
 As of January 2020, the Azure Data Studio query editor does not automatically reconnect/stay connected when an "untitled" editor is saved for the first time.  Query Editor Boost handles this for you and immediately reconnects a query the first time you save it.
 
 ![Reconnects Query Editor](https://raw.githubusercontent.com/dzsquared/query-editor-boost/master/images/QueryReconnect.gif)
+
+**Feature removed in February 2020.**
 
 ## Create New Snippets
 
@@ -103,6 +105,9 @@ Can be raised here: https://github.com/dzsquared/query-editor-boost/issues
 
 ## Release Notes
 
+### 0.4.1
+- Removes reconnect on query editor after editor save due to fix in ADS v1.15.0
+- Changes to how new query editor creation and connects is handled to align with ADS v1.15.0
 
 ### 0.4.0
 
