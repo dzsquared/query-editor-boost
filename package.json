@@ -18,7 +18,7 @@
     "activationEvents": [
         "*"
     ],
-    "main": "./dist/extension",
+    "main": "./out/extension",
     "contributes": {
         "commands": [
             {
@@ -30,8 +30,8 @@
                 "command": "dsk.newqueryoption",
                 "title": "QE Boost: New Query",
                 "icon": {
-                    "light": "./dist/src/media/newquery.svg",
-                    "dark": "./dist/src/media/newquery-inverse.svg"
+                    "light": "./out/src/media/newquery.svg",
+                    "dark": "./out/src/media/newquery-inverse.svg"
                 }
             },
             {
@@ -138,7 +138,25 @@
                     }
                 }
             }
-        ]
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "qebContainer",
+                    "title": "Query Editor Boost",
+                    "icon": "media/newquery-inverse.svg"
+                }
+            ]
+        },
+        "views": {
+            "qebContainer": [
+                {
+                    "id": "snippetExplorer",
+                    "name": "Snippets",
+                    "contextualTitle": "Snippet Explorer"
+                }
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "webpack --mode production",

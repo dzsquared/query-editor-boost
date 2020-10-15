@@ -11,14 +11,17 @@ import { runQuerySection } from './runQuery';
 import { placeScript } from './placescript';
 import { telemetryHelper } from './telemetryHelper';
 
-require('./media/newquery.svg');
-require('./media/newquery-inverse.svg');
+import { SnippetExplorerProvider } from './snippetExplorer';
+
+// require('./media/newquery.svg');
+// require('./media/newquery-inverse.svg');
 
 export function activate(context: vscode.ExtensionContext) {
     // query section execution keyboard shortcut setting
     setEagerRunContext();
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(setEagerRunContext));
 
+    vscode.window.showInformationMessage("running new version 2");
     // telemetry setup
     var tH = new telemetryHelper(context);
     tH.sendTelemetry('activated', { }, { });
@@ -105,6 +108,21 @@ export function activate(context: vscode.ExtensionContext) {
     }
     var disposable_runQuerySection = vscode.commands.registerCommand('dsk.runQuerySection', RunQuerySection);
     context.subscriptions.push(disposable_runQuerySection);
+
+    const snippetExplorerProvider = new SnippetExplorerProvider();
+    vscode.window.registerTreeDataProvider('snippetExplorer', snippetExplorerProvider);
+
+    var insertSelectedSnippet = async (selectedSnippet) => {
+        let editor = vscode.window.activeTextEditor;
+        if (!editor) { //open a new editor if none are open
+            await vscode.commands.executeCommand('newQuery');
+            let editor = vscode.window.activeTextEditor;
+        }
+        const vscodeSnippet = new vscode.SnippetString(selectedSnippet);
+        await editor.insertSnippet(vscodeSnippet);
+    }
+    var disposable_insertSelectedSnippet = vscode.commands.registerCommand('dsk.insertSnippet', insertSelectedSnippet);
+    context.subscriptions.push(disposable_insertSelectedSnippet);
 
 }
 
